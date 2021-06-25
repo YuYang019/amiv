@@ -1,0 +1,13 @@
+{
+    "name": "@amiv/vue",
+    "version": "0.0.1",
+    "main": "src/index.ts",
+    "license": "MIT",
+    "dependencies": {
+        "vue": "^3.0.0",
+        "@amiv/core": "^0.0.1"
+    },
+    "peerDependencies": {
+        "element-plus": "^1.0.2-beta.42"
+    }
+}
