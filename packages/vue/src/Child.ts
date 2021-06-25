@@ -1,6 +1,6 @@
-import {defineComponent, h, toRefs, ref} from 'vue';
-import {getComponent} from '@amiv/core';
-import {provideKey} from './Renderer';
+import {defineComponent, h, toRefs, ref} from 'vue'
+import {getComponent} from '@amiv/core'
+import {provideKey} from './Renderer'
 
 const Child = defineComponent({
     name: 'Child',
@@ -8,29 +8,30 @@ const Child = defineComponent({
     props: ['schema'],
 
     setup(props) {
-        const {schema} = toRefs(props);
         return {
-            schema
+            ...toRefs(props)
         }
     },
 
     render() {
-        const {schema} = this;
+        const {schema} = this
 
-        if (!schema) return '';
+        if (!schema) return ''
 
-        const {component, body} = schema;
-        const otherProps = {...schema};
-        delete otherProps.component;
-        delete otherProps.body;
+        const {component, body} = schema
+        const otherProps = {...schema}
+        delete otherProps.component
+        delete otherProps.body
 
-        const Component = getComponent(component);
+        const Component = getComponent(component)
+        console.log(component, Component)
         if (!Component) {
-            return '';
+            console.error('未找到组件', component)
+            return ''
         }
 
         const getChildren = () => {
-            const children: any[] = [];
+            const children: any[] = []
             if (Array.isArray(body)) {
                 body.forEach(item => {
                     children.push(h(Child, {
@@ -41,10 +42,10 @@ const Child = defineComponent({
                 children.push(h(Child, {
                     schema: body
                 }))
-            } else if (!!body) {
+            } else if (body) {
                 children.push(body)
             }
-            return children;
+            return children
         }
 
         return h(Component, {
@@ -55,4 +56,4 @@ const Child = defineComponent({
     }
 })
 
-export default Child;
+export default Child
