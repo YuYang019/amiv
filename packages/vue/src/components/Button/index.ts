@@ -1,7 +1,7 @@
-import {registerComponent} from '@amiv/core';
-import Divider from './Divider.vue';
+import {registerComponent} from '@amiv/core'
+import Button from './Button.vue'
 
 registerComponent({
-    name: 'divider',
-    component: Divider
+    type: 'button',
+    component: Button
 })

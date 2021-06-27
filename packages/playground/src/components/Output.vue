@@ -12,7 +12,7 @@ import HelloWorld from './HelloWorld.vue'
 import useCode from '../composables/useCode'
 
 registerComponent({
-    name: 'custom',
+    type: 'custom',
     component: HelloWorld,
 })
 

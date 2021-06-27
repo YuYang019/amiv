@@ -5,6 +5,8 @@ import Child from './Child'
 import './components/Divider'
 import './components/Page'
 import './components/Select'
+import './components/Button'
+import './components/ButtonToolbar'
 import './components/ElementUI'
 
 type RendererType = Record<string, any> | null;
@@ -41,6 +43,8 @@ export const Renderer = defineComponent({
 
     render() {
         const {computedSchema} = this
+
+        console.log('rerender', computedSchema)
 
         if (!computedSchema) {
             return

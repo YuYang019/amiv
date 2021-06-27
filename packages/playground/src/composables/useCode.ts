@@ -1,20 +1,18 @@
 import {ref, InjectionKey} from 'vue'
 
-const defaultCode = `const schema = {
-  component: 'page',
-  title: '简单页面',
-  body: [
+const defaultCode = `{
+  "component": "page",
+  "title": "简单页面",
+  "body": [
     {
-      component: 'custom',
-      msg: 'Hello Vue 3 + TypeScript + Vite',
+      "component": "custom",
+      "msg": "Hello Vue 3 + TypeScript + Vite"
     },
     {
-      component: 'divider',
-    },
+      "component": "divider"
+    }
   ]
 }
-
-return schema
 `
 
 export const provideKey: InjectionKey<Record<string, any>> = Symbol('schema')
@@ -23,18 +21,24 @@ const schema = ref()
 export default function() {
     const key = 'amiv/code'
 
-    function setCode(code: string) {
-        const fn = new Function(code)
-        const ret = fn.call(window)
-        schema.value = ret
-        localStorage.setItem(key, code)
+    function setCode(json: string) {
+        try {
+            const ret = ''
+            const code = `ret = ${json}`
+            eval(code)
+            console.log(ret)
+            schema.value = ret
+            localStorage.setItem(key, json)
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     function getCode() {
-        return localStorage.getItem(key) || defaultCode
+        const code = localStorage.getItem(key) || defaultCode
+        setCode(code)
+        return code
     }
-
-    setCode(getCode())
 
     return {
         setCode,

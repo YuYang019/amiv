@@ -16,17 +16,18 @@ const Child = defineComponent({
     render() {
         const {schema} = this
 
+        if (typeof schema === 'string') {
+            return schema
+        }
+
         if (!schema) return ''
 
-        const {component, body} = schema
-        const otherProps = {...schema}
-        delete otherProps.component
-        delete otherProps.body
+        const {type, body, ...otherProps} = schema
 
-        const Component = getComponent(component)
-        console.log(component, Component)
+
+        const Component = getComponent(type)
         if (!Component) {
-            console.error('未找到组件', component)
+            console.error('未找到组件', type)
             return ''
         }
 
@@ -47,6 +48,8 @@ const Child = defineComponent({
             }
             return children
         }
+
+        console.log('render-child', type, body, otherProps)
 
         return h(Component, {
             ...otherProps

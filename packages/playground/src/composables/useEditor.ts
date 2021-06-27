@@ -42,7 +42,7 @@ export default function(el: MaybeRef<HTMLElement | undefined>) {
 
     const { getCode } = useCode()
     const monacoEditor = monaco.editor.create(el as HTMLElement, {
-        language: 'javascript',
+        language: 'json',
         value: getCode()
     })
 

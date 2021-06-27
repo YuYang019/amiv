@@ -9,7 +9,7 @@ Object.keys(ElementPlus).forEach((name: string) => {
     const component = ElementPlus[name]
     if (name.startsWith('El')) {
         registerComponent({
-            name: getKebabCase(name),
+            type: getKebabCase(name),
             component
         })
     }
