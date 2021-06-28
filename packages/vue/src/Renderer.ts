@@ -7,6 +7,7 @@ import './components/Page'
 import './components/Select'
 import './components/Button'
 import './components/ButtonToolbar'
+import './components/Form'
 import './components/ElementUI'
 
 type RendererType = Record<string, any> | null;

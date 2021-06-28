@@ -23,10 +23,9 @@ export default function() {
 
     function setCode(json: string) {
         try {
-            const ret = ''
+            let ret
             const code = `ret = ${json}`
             eval(code)
-            console.log(ret)
             schema.value = ret
             localStorage.setItem(key, json)
         } catch (err) {

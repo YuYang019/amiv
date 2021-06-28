@@ -24,7 +24,6 @@ const Child = defineComponent({
 
         const {type, body, ...otherProps} = schema
 
-
         const Component = getComponent(type)
         if (!Component) {
             console.error('未找到组件', type)
@@ -51,11 +50,13 @@ const Child = defineComponent({
 
         console.log('render-child', type, body, otherProps)
 
-        return h(Component, {
+        const vnodes = h(Component, {
             ...otherProps
         }, {
             default: getChildren
         })
+
+        return vnodes
     }
 })
 

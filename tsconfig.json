@@ -15,8 +15,8 @@
         "sourceMap": true,
         "baseUrl": ".",
         "paths": {
-            "@/*": [
-                "packages/*/src"
+            "packages": [
+                "./packages"
             ],
         },
         "lib": [
