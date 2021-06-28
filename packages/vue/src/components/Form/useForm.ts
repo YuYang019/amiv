@@ -1,4 +1,4 @@
-import { ref, reactive, onMounted,InjectionKey, ComponentInternalInstance } from 'vue'
+import { ref, reactive, onMounted,InjectionKey, watchEffect, ComponentInternalInstance } from 'vue'
 
 export const provideKey: InjectionKey<{
     formValue: any;
@@ -56,19 +56,22 @@ export function useForm() {
         }
     }
 
-    // TODO 性能优化
     function checkExpressions() {
         linkages.forEach((linkageExps, name) => {
             Object.keys(linkageExps).forEach(expType => {
                 const handler = expTypeToHandler[expType]
                 const exp = linkageExps[expType]
                 if (!exp) return
-                const valid = run(form, exp)
-                const comp = formItems.get(name)
-                console.log('check', exp, name, valid, form)
-                if (comp) {
-                    (comp as any)?.ctx[handler]?.(valid)
-                }
+
+                watchEffect(() => {
+                    const valid = run(form, exp)
+                    const comp = formItems.get(name)
+                    console.log('watch-effect', exp, name, valid, form)
+                    if (comp) {
+                        (comp as any)?.ctx[handler]?.(valid)
+                    }
+                })
+                
             })
         })
     }
@@ -76,7 +79,7 @@ export function useForm() {
     function setFormValue(name: string, value: any) {
         console.log('set-form-value', name, value)
         form[name] = value
-        checkExpressions()
+        // checkExpressions()
     }
 
     function registerLinkage(name: string, expressions: Expressions) {

@@ -1,11 +1,14 @@
 <template>
     <div class="output">
-        <renderer :schema="schema" />
+        <renderer
+            v-if="rendered"
+            :schema="schema"
+        />
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, watch, nextTick } from 'vue'
 import { Renderer } from '@amiv/vue'
 import { registerComponent } from '@amiv/core'
 import HelloWorld from './HelloWorld.vue'
@@ -22,9 +25,19 @@ export default defineComponent({
         Renderer,
     },
     setup() {
+        const rendered = ref(true)
         const { schema } = useCode()
 
+        // 强制重渲染
+        watch(schema, () => {
+            rendered.value = false
+            nextTick(() => {
+                rendered.value = true
+            })
+        })
+
         return {
+            rendered,
             schema,
         }
     },
