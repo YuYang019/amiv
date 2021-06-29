@@ -22,6 +22,7 @@ module.exports = {
             'alignAttributesVertically': true,
             'ignores': []
         }],
+        'vue/one-component-per-file': 'off',
         '@typescript-eslint/ban-ts-comment': 'off',
         '@typescript-eslint/explicit-module-boundary-types': 'off',
         quotes: ['error', 'single'],

@@ -4357,6 +4357,11 @@ lodash@^4.17.12, lodash@^4.17.15, lodash@^4.17.20, lodash@^4.2.1:
   resolved "https://registry.nlark.com/lodash/download/lodash-4.17.21.tgz?cache=0&sync_timestamp=1622685830565&other_urls=https%3A%2F%2Fregistry.nlark.com%2Flodash%2Fdownload%2Flodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha1-Z5WRxWTDv/quhFTPCz3zcMPWkRw=
 
+lodash@^4.17.21:
+  version "4.17.21"
+  resolved "http://registry.npm.baidu-int.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
+  integrity sha1-Z5WRxWTDv/quhFTPCz3zcMPWkRw=
+
 log-symbols@^4.1.0:
   version "4.1.0"
   resolved "https://registry.nlark.com/log-symbols/download/log-symbols-4.1.0.tgz#3fbdbb95b4683ac9fc785111e792e558d4abd503"

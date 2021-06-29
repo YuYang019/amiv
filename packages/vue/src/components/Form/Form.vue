@@ -1,30 +1,39 @@
 <template>
-    <div>{{ value }}</div>
+    <div v-if="debug">
+        {{ value }}
+    </div>
     <el-form v-bind="$attrs">
         <slot />
     </el-form>
 </template>
 
 <script lang="ts">
-import {ElForm} from 'element-plus'
-import {defineComponent, h, provide} from 'vue'
-import {useForm, provideKey} from './useForm'
+import {defineComponent, ref, provide} from 'vue'
+import {useForm, injectionKey} from './useForm'
 
 export default defineComponent({
     name: 'Form',
 
+    inheritAttrs: false,
+
+    props: {
+        debug: {
+            type: Boolean,
+            default: false
+        }
+    },
+
     setup() {
         const form = useForm()
 
-        provide(provideKey, form)
+        provide(injectionKey, form)
 
         return {
-            value: form.formValue
+            value: form.formValue,
         }
     },
 
     created() {
-        // createForm()
         console.log('form', this.$attrs)
     }
 })

@@ -1,8 +1,11 @@
 import {registerComponent} from '@amiv/core'
-import withExtraProps from '../../utils/withExtraProps'
+import {withExtraProps, withFormItem} from 'packages/vue/src/utils/hoc'
 import Form from './Form.vue'
 import Radio from './Radio.vue'
 import Input from './Input.vue'
+import Checkbox from './Checkbox.vue'
+import Checkboxes from './Checkboxes.vue'
+
 
 registerComponent({
     type: 'form',
@@ -11,25 +14,35 @@ registerComponent({
 
 registerComponent({
     type: 'input-text',
-    component: Input
+    component: withFormItem(Input)
 })
 
 registerComponent({
     type: 'input-password',
-    component: withExtraProps(Input, { inputType: 'password' })
+    component: withFormItem(withExtraProps(Input, { inputType: 'password' }))
 })
 
 registerComponent({
     type: 'input-url',
-    component: withExtraProps(Input, { inputType: 'url' })
+    component: withFormItem(withExtraProps(Input, { inputType: 'url' }))
 })
 
 registerComponent({
     type: 'input-email',
-    component: withExtraProps(Input, { inputType: 'email' })
+    component: withFormItem(withExtraProps(Input, { inputType: 'email' }))
 })
 
 registerComponent({
     type: 'radios',
-    component: Radio
+    component: withFormItem(Radio)
+})
+
+registerComponent({
+    type: 'checkbox',
+    component: withFormItem(Checkbox)
+})
+
+registerComponent({
+    type: 'checkboxes',
+    component: withFormItem(Checkboxes)
 })

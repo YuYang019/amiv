@@ -1,12 +1,5 @@
 import { ref, reactive, onMounted,InjectionKey, watchEffect, ComponentInternalInstance } from 'vue'
 
-export const provideKey: InjectionKey<{
-    formValue: any;
-    setFormValue: (name: string, value: any) => void;
-    registerFormItem: (name: string, component: ComponentInternalInstance | null) => void;
-    registerLinkage: (name: string, expressions: Expressions) => void
-}> = Symbol('')
-
 type RemoveSuffix<T extends string> = T extends `${infer R}On` ? R : never
 
 type ExpTypes = 'disabledOn' | 'visibleOn'
@@ -21,20 +14,29 @@ type Expressions =  {
     [K in ExpTypes]: string
 }
 
+interface RegisterFormItemOptions {
+    component: ComponentInternalInstance | null,
+    expressions: Expressions
+}
+
 const expTypeToHandler: ExpTypeToHandler = {
     'disabledOn': 'changeDisabled',
     'visibleOn': 'changeVisible'
 }
 
+export const injectionKey: InjectionKey<{
+    formValue: any;
+    setFormValue: (name: string, value: any) => void;
+    registerFormItem: (name: string, options: RegisterFormItemOptions) => void;
+}> = Symbol('')
+
 export function useForm() {
     const form = reactive({})
-    const formItems = new Map<string, ComponentInternalInstance>()
+    const components = new Map<string, ComponentInternalInstance | null>()
     const linkages = new Map<string, Expressions>()
     const evalCache = new Map<string, () => void>()
 
     function run(ctx: any, exp: string) {
-        console.log(exp)
-
         let fn
         if (evalCache.has(exp)) {
             fn = evalCache.get(exp)
@@ -48,7 +50,7 @@ export function useForm() {
         }
 
         try {
-            console.log(fn, ctx)
+            console.log('run', exp)
             return fn.call(ctx, ctx, {})
         } catch (err) {
             console.warn(exp, err)
@@ -56,7 +58,7 @@ export function useForm() {
         }
     }
 
-    function checkExpressions() {
+    function watchExpressions() {
         linkages.forEach((linkageExps, name) => {
             Object.keys(linkageExps).forEach(expType => {
                 const handler = expTypeToHandler[expType]
@@ -65,13 +67,12 @@ export function useForm() {
 
                 watchEffect(() => {
                     const valid = run(form, exp)
-                    const comp = formItems.get(name)
+                    const comp = components.get(name)
                     console.log('watch-effect', exp, name, valid, form)
                     if (comp) {
                         (comp as any)?.ctx[handler]?.(valid)
                     }
                 })
-                
             })
         })
     }
@@ -79,38 +80,25 @@ export function useForm() {
     function setFormValue(name: string, value: any) {
         console.log('set-form-value', name, value)
         form[name] = value
-        // checkExpressions()
     }
 
-    function registerLinkage(name: string, expressions: Expressions) {
-        if (expressions) {
+    function registerFormItem(name: string, options: RegisterFormItemOptions) {
+        if (options) {
+            const { component, expressions } = options
+            console.log('register-form-item', name, options)
+            components.set(name, component)
             linkages.set(name, expressions)
-        }
-    }
-
-    function registerFormItem(name: string, component: ComponentInternalInstance | null) {
-        if (component) {
-            console.log('set form item', name, component)
-            formItems.set(name, component)
         }
     }
 
     // form渲染完毕，检查联动
     onMounted(() => {
-        checkExpressions()
+        watchExpressions()
     })
 
     return {
         formValue: form,
         registerFormItem,
-        registerLinkage,
         setFormValue
     }
 }
-
-// export default function useForm() {
-//     return {
-//         setValue,
-//         getForm
-//     }
-// }

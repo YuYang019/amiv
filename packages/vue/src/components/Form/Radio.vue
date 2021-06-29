@@ -1,56 +1,58 @@
 <template>
-    <form-item>
-        <el-radio-group v-model="value">
-            <el-radio
-                v-for="item in options"
-                :label="item.value"
-                :key="item.value"
-            >
-                {{ item.label }}
-            </el-radio>
-        </el-radio-group>
-    </form-item>
+    <el-radio-group
+        v-model="value"
+        :disabled="linkageDisabled"
+    >
+        <el-radio
+            v-for="item in options"
+            :label="item.value"
+            :key="item.value"
+        >
+            {{ item.label }}
+        </el-radio>
+    </el-radio-group>
 </template>
 
 <script lang="ts">
 import {ElRadio, ElRadioGroup} from 'element-plus'
-import {defineComponent, watch, ref, inject} from 'vue'
-import FormItem from './FormItem.vue'
-import {provideKey} from './useForm'
+import {defineComponent, watch, ref, PropType} from 'vue'
+
+interface Option {
+    value: any,
+    label: string
+}
 
 export default defineComponent({
     name: 'Radio',
 
     props: {
-        name: {
-            type: String,
-            required: true
+        linkageDisabled: {
+            type: Boolean
         },
+        setFormValue: {
+            type: Function,
+            default: () => void 0
+        },
+        options: {
+            type: Array as PropType<Option[]>,
+            default: () => []
+        }
     },
 
     components: {
-        FormItem,
         ElRadio,
         ElRadioGroup
     },
 
     setup(props) {
         const value = ref('')
-        const form = inject(provideKey)
 
         watch(value, (val) => {
-            form?.setFormValue(props.name, val)
+            props?.setFormValue?.(val)
         })
 
         return {
             value,
-            form
-        }
-    },
-
-    computed: {
-        options() {
-            return this.$attrs.options || []
         }
     },
 

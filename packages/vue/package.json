@@ -4,8 +4,9 @@
     "main": "src/index.ts",
     "license": "MIT",
     "dependencies": {
-        "vue": "^3.0.0",
-        "@amiv/core": "^0.0.1"
+        "@amiv/core": "^0.0.1",
+        "lodash": "^4.17.21",
+        "vue": "^3.0.0"
     },
     "peerDependencies": {
         "element-plus": "^1.0.2-beta.42"
