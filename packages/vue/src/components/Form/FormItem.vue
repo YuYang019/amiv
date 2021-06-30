@@ -8,10 +8,11 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, getCurrentInstance, ref, inject} from 'vue'
+import { defineComponent, getCurrentInstance, ref, inject, watchEffect } from 'vue'
 import pick from 'lodash/pick'
 import omit from 'lodash/omit'
-import {injectionKey} from './useForm'
+import template from 'lodash/template'
+import { injectionKey } from './useForm'
 
 export default defineComponent({
     name: 'FormItem',
@@ -38,7 +39,11 @@ export default defineComponent({
         disabledOn: {
             type: String,
             default: ''
-        }
+        },
+        source: {
+            type: [String, Object],
+            default: ''
+        },
     },
 
     setup(props) {
@@ -47,6 +52,31 @@ export default defineComponent({
         const innerDisabled = ref<boolean>(props.disabled)
 
         const form = inject(injectionKey)
+
+        if (typeof props.source === 'string') {
+            let firstInit = true
+            watchEffect(() => {
+                // 收集依赖
+                if (firstInit) {
+                    const deps: string[] = []
+                    const pattern = /\${([\s\S]+?)}/g
+                    let ret = pattern.exec(props.source)
+                    while (ret) {
+                        deps.push(ret[1])
+                        ret = pattern.exec(props.source)
+                    }
+                    if (deps.length) {
+                        deps.forEach(key => form?.formValue[key])
+                    }
+                    firstInit = false
+                    return
+                }
+                // TODO template 自写
+                const compiled = template(props.source)
+                const api = compiled(form?.formValue)
+                console.log(api)
+            })
+        }
 
         form?.registerFormItem(props.name, {
             component: getCurrentInstance(),

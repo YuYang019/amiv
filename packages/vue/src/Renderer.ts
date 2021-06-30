@@ -4,7 +4,6 @@ import Child from './Child'
 
 import './components/Divider'
 import './components/Page'
-import './components/Select'
 import './components/Button'
 import './components/ButtonToolbar'
 import './components/Form'

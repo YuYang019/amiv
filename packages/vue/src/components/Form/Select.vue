@@ -1,5 +1,8 @@
 <template>
-    <el-select v-model="value">
+    <el-select
+        v-model="value"
+        :disabled="linkageDisabled"
+    >
         <el-option
             v-for="item in options"
             :key="item.value"
@@ -10,7 +13,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, PropType} from 'vue'
+import { defineComponent, ref, PropType, watch, watchEffect } from 'vue'
 
 interface SelectOption {
     label: string;
@@ -19,25 +22,33 @@ interface SelectOption {
 
 export default defineComponent({
     name: 'Select',
+
     props: {
+        linkageDisabled: {
+            type: Boolean
+        },
+        setFormValue: {
+            type: Function,
+            default: () => void 0
+        },
         options: {
             type: Array as PropType<SelectOption[]>,
             default: () => []
         }
     },
-    setup() {
+
+    setup(props) {
         const value = ref()
+
+        watch(value, newVal => {
+            props.setFormValue?.(newVal)
+        })
+
         return {
             value
         }
     }
 })
 </script>
-
-<style>
-.page {
-    border: 1px solid #efefef;
-}
-</style>
 
 
