@@ -13,7 +13,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType, watch, watchEffect } from 'vue'
+import { defineComponent, ref, PropType, watch, inject, watchEffect } from 'vue'
+import { injectionKey } from './useForm'
 
 interface SelectOption {
     label: string;
@@ -24,6 +25,10 @@ export default defineComponent({
     name: 'Select',
 
     props: {
+        name: {
+            type: String,
+            required: true
+        },
         linkageDisabled: {
             type: Boolean
         },
@@ -39,9 +44,16 @@ export default defineComponent({
 
     setup(props) {
         const value = ref()
+        const form = inject(injectionKey)
 
         watch(value, newVal => {
-            props.setFormValue?.(newVal)
+            console.log('new inner val', newVal, props)
+            form?.setFormValue?.(props.name, newVal)
+        })
+
+        watch(() => form?.formValue[props.name], newVal => {
+            console.log('newval', newVal)
+            value.value = newVal
         })
 
         return {

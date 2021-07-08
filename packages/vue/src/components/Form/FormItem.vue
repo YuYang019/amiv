@@ -11,8 +11,8 @@
 import { defineComponent, getCurrentInstance, ref, inject, watchEffect } from 'vue'
 import pick from 'lodash/pick'
 import omit from 'lodash/omit'
-import template from 'lodash/template'
 import { injectionKey } from './useForm'
+import useSource from './useSource'
 
 export default defineComponent({
     name: 'FormItem',
@@ -50,33 +50,9 @@ export default defineComponent({
         const value = ref()
         const innerVisible = ref<boolean>(props.visible || true)
         const innerDisabled = ref<boolean>(props.disabled)
+        const {options} = useSource(props.source)
 
         const form = inject(injectionKey)
-
-        if (typeof props.source === 'string') {
-            let firstInit = true
-            watchEffect(() => {
-                // 收集依赖
-                if (firstInit) {
-                    const deps: string[] = []
-                    const pattern = /\${([\s\S]+?)}/g
-                    let ret = pattern.exec(props.source)
-                    while (ret) {
-                        deps.push(ret[1])
-                        ret = pattern.exec(props.source)
-                    }
-                    if (deps.length) {
-                        deps.forEach(key => form?.formValue[key])
-                    }
-                    firstInit = false
-                    return
-                }
-                // TODO template 自写
-                const compiled = template(props.source)
-                const api = compiled(form?.formValue)
-                console.log(api)
-            })
-        }
 
         form?.registerFormItem(props.name, {
             component: getCurrentInstance(),
@@ -99,6 +75,7 @@ export default defineComponent({
         return {
             form,
             value,
+            options,
             innerVisible,
             innerDisabled,
             changeDisabled,
@@ -116,11 +93,13 @@ export default defineComponent({
         },
         slotProps() {
             return {
-                ...omit(this.$attrs, ['label', 'disabled', 'visible', 'disabledOn', 'visibleOn', 'name']),
+                ...omit(this.$attrs, ['label']),
+                name: this.$props.name,
                 linkageDisabled: this.innerDisabled,
+                options: this.options || this.$attrs['options'],
                 setFormValue: (value: unknown) => {
                     this.form.setFormValue(this.$props.name, value)
-                }
+                },
             }
         }
     },

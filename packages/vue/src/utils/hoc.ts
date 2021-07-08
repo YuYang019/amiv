@@ -17,6 +17,7 @@ export function withFormItem(Wrapped: any) {
         render() {
             return h(FormItem, {}, {
                 default: (data) => {
+                    console.log(data.slotProps)
                     return h(Wrapped, {
                         ...data.slotProps
                     })
