@@ -15,6 +15,7 @@ module.exports = {
     rules: {
         'no-unused-vars': 'off',
         'no-console': 'warn',
+        'object-curly-spacing': ['error', 'always'],
         'vue/html-indent': ['error', 4, {
             'attribute': 1,
             'baseIndent': 1,

@@ -1,4 +1,4 @@
-import {ref, InjectionKey} from 'vue'
+import { ref, InjectionKey } from 'vue'
 
 const defaultCode = `{
   "component": "page",

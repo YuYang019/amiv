@@ -1,5 +1,5 @@
-import {registerComponent} from '@amiv/core'
-import {withExtraProps, withFormItem} from 'packages/vue/src/utils/hoc'
+import { registerComponent } from '@amiv/core'
+import { withExtraProps, withFormItem } from 'packages/vue/src/utils/hoc'
 import Form from './Form.vue'
 import Radio from './Radio.vue'
 import Input from './Input.vue'

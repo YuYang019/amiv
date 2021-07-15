@@ -25,7 +25,7 @@ const expTypeToHandler: ExpTypeToHandler = {
 }
 
 export const injectionKey: InjectionKey<{
-    formValue: any;
+    formValue: Record<string, any>;
     setFormValue: (name: string, value: any) => void;
     registerFormItem: (name: string, options: RegisterFormItemOptions) => void;
 }> = Symbol('')

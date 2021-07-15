@@ -8,8 +8,8 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, provide} from 'vue'
-import {useForm, injectionKey} from './useForm'
+import { defineComponent, ref, provide } from 'vue'
+import { useForm, injectionKey } from './useForm'
 
 export default defineComponent({
     name: 'Form',

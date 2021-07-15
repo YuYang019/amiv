@@ -1,4 +1,4 @@
-import {registerComponent} from '@amiv/core'
+import { registerComponent } from '@amiv/core'
 import * as ElementPlus from 'element-plus'
 
 function getKebabCase(str: string) {

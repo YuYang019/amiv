@@ -1,4 +1,4 @@
-import {DefineComponent, h} from 'vue';
+import { DefineComponent, h } from 'vue'
 // import {register} from '@amiv/core';
 
 interface RegisterComponentOptions<T> {

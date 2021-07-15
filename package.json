@@ -5,6 +5,9 @@
     "workspaces": [
         "packages/*"
     ],
+    "scripts": {
+        "lint": "eslint --fix --no-error-on-unmatched-pattern **/*.{js,ts,tsx,jsx,vue}"
+    },
     "devDependencies": {
         "@babel/core": "^7.14.6",
         "@babel/eslint-parser": "^7.14.5",

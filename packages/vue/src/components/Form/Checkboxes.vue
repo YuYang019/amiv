@@ -1,8 +1,9 @@
 <template>
     <el-checkbox-group
-        v-model="value"
-        :disabled="linkageDisabled"
         v-bind="$attrs"
+        v-model="innerValue"
+        @change="onChange"
+        :disabled="linkageDisabled"
     >
         <el-checkbox
             v-for="item in options"
@@ -28,8 +29,7 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, PropType, watch} from 'vue'
-import pick from 'lodash/pick'
+import { defineComponent, ref, watch, PropType } from 'vue'
 
 interface Option {
     value: any;
@@ -40,6 +40,14 @@ export default defineComponent({
     name: 'Checkboxes',
 
     props: {
+        name: {
+            type: String,
+            required: true,
+        },
+        value: {
+            type: [Array, String],
+            default: () => []
+        },
         linkageDisabled: {
             type: Boolean
         },
@@ -62,15 +70,23 @@ export default defineComponent({
     },
 
     setup(props) {
-        const value = ref([])
+        const innerValue = ref([])
 
-        watch(value, (newVal: Array<string | number>) => {
+        const onChange = (newVal: Array<unknown>) => {
             const val = props.joinValues ? newVal.join(props.delimeter) : newVal
             props?.setFormValue?.(val)
+        }
+
+        // 监听重置事件
+        watch(() => props.value, (newVal: string | any[]) => {
+            if (!newVal || newVal?.length === 0) {
+                innerValue.value = []
+            }
         })
 
         return {
-            value,
+            innerValue,
+            onChange,
         }
     },
 

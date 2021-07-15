@@ -1,6 +1,7 @@
 <template>
     <el-select
-        v-model="value"
+        :model-value="value"
+        @change="onChange"
         :disabled="linkageDisabled"
     >
         <el-option
@@ -13,8 +14,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType, watch, inject, watchEffect } from 'vue'
-import { injectionKey } from './useForm'
+import { defineComponent, ref, PropType } from 'vue'
 
 interface SelectOption {
     label: string;
@@ -25,9 +25,9 @@ export default defineComponent({
     name: 'Select',
 
     props: {
-        name: {
-            type: String,
-            required: true
+        value: {
+            type: [String, Number],
+            default: '',
         },
         linkageDisabled: {
             type: Boolean
@@ -43,21 +43,12 @@ export default defineComponent({
     },
 
     setup(props) {
-        const value = ref()
-        const form = inject(injectionKey)
-
-        watch(value, newVal => {
-            console.log('new inner val', newVal, props)
-            form?.setFormValue?.(props.name, newVal)
-        })
-
-        watch(() => form?.formValue[props.name], newVal => {
-            console.log('newval', newVal)
-            value.value = newVal
-        })
+        const onChange = (val: unknown) => {
+            props?.setFormValue?.(val)
+        }
 
         return {
-            value
+            onChange,
         }
     }
 })

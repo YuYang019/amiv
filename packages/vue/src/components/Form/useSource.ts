@@ -1,5 +1,5 @@
-import {watchEffect, getCurrentInstance, ref, inject} from 'vue'
-import {injectionKey} from './useForm'
+import { watchEffect, getCurrentInstance, ref, inject } from 'vue'
+import { injectionKey } from './useForm'
 
 type Source = string | {
     method?: 'get' | 'post';
@@ -22,6 +22,10 @@ function isString(data: unknown): data is string {
     return typeof data === 'string'
 }
 
+function hasOwnProperty(obj: any, key: string) {
+    return Object.prototype.hasOwnProperty.call(obj, key)
+}
+
 function useSource() {
     const instance = getCurrentInstance()
     const props = instance?.props as Props
@@ -39,16 +43,20 @@ function useSource() {
                 const key = args[1]
                 return form?.formValue[key] ?? ''
             })
+
             console.log('api', api, props.name)
 
             options.value = []
-            form?.setFormValue(props.name, '')
+            if (hasOwnProperty(form?.formValue, props.name)) {
+                // 联动被触发时，重置
+                form?.setFormValue(props.name, '')
+            }
 
             setTimeout(() => {
                 options.value = [
-                    {label: 'asda', value: 1},
-                    {label: '123123', value: 2},
-                    {label: 'vfcsa', value: 3}
+                    { label: 'asda', value: 1 },
+                    { label: '123123', value: 2 },
+                    { label: 'vfcsa', value: 3 }
                 ]
             }, 2000)
         })

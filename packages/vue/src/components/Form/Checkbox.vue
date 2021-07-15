@@ -1,6 +1,7 @@
 <template>
     <el-checkbox
-        v-model="value"
+        :model-value="value"
+        @change="onChange"
         :border="border"
         :true-label="trueValue"
         :false-label="falseValue"
@@ -11,13 +12,16 @@
 </template>
 
 <script lang="ts">
-import {defineComponent, ref, watch} from 'vue'
-import pick from 'lodash/pick'
+import { defineComponent } from 'vue'
 
 export default defineComponent({
     name: 'Checkbox',
 
     props: {
+        value: {
+            type: [String, Number, Boolean],
+            default: false,
+        },
         linkageDisabled: {
             type: Boolean
         },
@@ -44,14 +48,12 @@ export default defineComponent({
     },
 
     setup(props) {
-        const value = ref()
-
-        watch(value, (val) => {
+        const onChange = (val: unknown) => {
             props?.setFormValue?.(val)
-        })
+        }
 
         return {
-            value,
+            onChange,
         }
     },
 

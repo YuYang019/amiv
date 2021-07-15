@@ -1,6 +1,7 @@
 <template>
     <el-radio-group
-        v-model="value"
+        :model-value="value"
+        @change="onChange"
         :disabled="linkageDisabled"
     >
         <el-radio
@@ -14,8 +15,8 @@
 </template>
 
 <script lang="ts">
-import {ElRadio, ElRadioGroup} from 'element-plus'
-import {defineComponent, watch, ref, PropType} from 'vue'
+import { ElRadio, ElRadioGroup } from 'element-plus'
+import { defineComponent, PropType } from 'vue'
 
 interface Option {
     value: any,
@@ -26,6 +27,10 @@ export default defineComponent({
     name: 'Radio',
 
     props: {
+        value: {
+            type: [String, Number, Boolean],
+            default: '',
+        },
         linkageDisabled: {
             type: Boolean
         },
@@ -45,14 +50,12 @@ export default defineComponent({
     },
 
     setup(props) {
-        const value = ref('')
-
-        watch(value, (val) => {
+        const onChange = (val: unknown) => {
             props?.setFormValue?.(val)
-        })
+        }
 
         return {
-            value,
+            onChange,
         }
     },
 

@@ -1,6 +1,6 @@
-import {defineComponent, h, toRefs, ref} from 'vue'
-import {getComponent} from '@amiv/core'
-import {provideKey} from './Renderer'
+import { defineComponent, h, toRefs, ref } from 'vue'
+import { getComponent } from '@amiv/core'
+import { provideKey } from './Renderer'
 
 const Child = defineComponent({
     name: 'Child',
@@ -14,7 +14,7 @@ const Child = defineComponent({
     },
 
     render() {
-        const {schema} = this
+        const { schema } = this
 
         if (typeof schema === 'string') {
             return schema
@@ -22,7 +22,7 @@ const Child = defineComponent({
 
         if (!schema) return ''
 
-        const {type, body, ...otherProps} = schema
+        const { type, body, ...otherProps } = schema
 
         const Component = getComponent(type)
         if (!Component) {

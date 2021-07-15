@@ -10,7 +10,7 @@ export function createRenderer(options: any) {
 }
 
 export function registerComponent<T>(options: RegisterComponentOptions<T>) {
-    const {type, component} = options
+    const { type, component } = options
     componentsMap.set(type, component)
 }
 

@@ -1,5 +1,5 @@
-import {defineComponent, h, computed, watch, ref, provide, InjectionKey, Ref} from 'vue'
-import {createRenderer} from '@amiv/core'
+import { defineComponent, h, computed, watch, ref, provide, InjectionKey, Ref } from 'vue'
+import { createRenderer } from '@amiv/core'
 import Child from './Child'
 
 import './components/Divider'
@@ -28,12 +28,12 @@ export const Renderer = defineComponent({
             () => props.schema,
             val => {
                 if (val) {
-                    renderer.value = createRenderer({schema: val})
+                    renderer.value = createRenderer({ schema: val })
                 } else {
                     renderer.value = null
                 }
             },
-            {immediate: true}
+            { immediate: true }
         )
 
         return {
@@ -42,7 +42,7 @@ export const Renderer = defineComponent({
     },
 
     render() {
-        const {computedSchema} = this
+        const { computedSchema } = this
 
         console.log('rerender', computedSchema)
 

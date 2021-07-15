@@ -1,6 +1,7 @@
 <template>
     <el-input
-        v-model="value"
+        :model-value="value"
+        @update:model-value="onChange"
         v-bind="attrs"
         :type="type"
         :disabled="linkageDisabled"
@@ -8,8 +9,8 @@
 </template>
 
 <script lang="ts">
-import {ElInput} from 'element-plus'
-import {defineComponent, ref, watch} from 'vue'
+import { ElInput } from 'element-plus'
+import { defineComponent } from 'vue'
 import pick from 'lodash/pick'
 
 export default defineComponent({
@@ -20,6 +21,10 @@ export default defineComponent({
     },
 
     props: {
+        value: {
+            type: [String, Number, Array, Boolean, Object],
+            default: ''
+        },
         linkageDisabled: {
             type: Boolean
         },
@@ -30,20 +35,18 @@ export default defineComponent({
     },
 
     setup(props) {
-        const value = ref()
-
-        watch(value, (val) => {
+        const onChange = (val: unknown) => {
             props?.setFormValue?.(val)
-        })
+        }
 
         return {
-            value,
+            onChange,
         }
     },
 
     computed: {
         type() {
-            const {inputType} = this.$attrs
+            const { inputType } = this.$attrs
             if (inputType === 'url') return 'url'
             if (inputType === 'email') return 'email'
             if (inputType === 'password') return 'password'

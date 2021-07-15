@@ -1,16 +1,14 @@
 <template>
     <el-form-item
         v-if="innerVisible"
-        v-bind="attrs"
+        :label="label"
     >
         <slot :slotProps="slotProps" />
     </el-form-item>
 </template>
 
 <script lang="ts">
-import { defineComponent, getCurrentInstance, ref, inject, watchEffect } from 'vue'
-import pick from 'lodash/pick'
-import omit from 'lodash/omit'
+import { defineComponent, getCurrentInstance, ref, inject } from 'vue'
 import { injectionKey } from './useForm'
 import useSource from './useSource'
 
@@ -23,6 +21,10 @@ export default defineComponent({
         name: {
             type: String,
             required: true
+        },
+        label: {
+            type: String,
+            default: '',
         },
         visible: {
             type: Boolean,
@@ -50,7 +52,7 @@ export default defineComponent({
         const value = ref()
         const innerVisible = ref<boolean>(props.visible || true)
         const innerDisabled = ref<boolean>(props.disabled)
-        const {options} = useSource(props.source)
+        const { options } = useSource()
 
         const form = inject(injectionKey)
 
@@ -84,23 +86,25 @@ export default defineComponent({
     },
 
     computed: {
-        attrs() {
-            const picked = pick(this.$attrs, ['label'])
-            return {
-                ...picked,
-                label: picked.label || ''
-            }
-        },
         slotProps() {
-            return {
-                ...omit(this.$attrs, ['label']),
-                name: this.$props.name,
-                linkageDisabled: this.innerDisabled,
-                options: this.options || this.$attrs['options'],
+            const { form: { formValue }, innerDisabled } = this
+            const { name } = this.$props
+
+            const props = {
+                ...this.$attrs,
+                name,
+                value: formValue[this.$props.name],
+                linkageDisabled: innerDisabled,
                 setFormValue: (value: unknown) => {
-                    this.form.setFormValue(this.$props.name, value)
+                    this.form.setFormValue(name, value)
                 },
             }
+
+            if (this.options) {
+                props.options = this.options
+            }
+
+            return props
         }
     },
 
