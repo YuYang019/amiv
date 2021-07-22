@@ -2,6 +2,7 @@
     <el-form-item
         v-if="innerVisible"
         :label="label"
+        :prop="name"
     >
         <slot :slotProps="slotProps" />
     </el-form-item>

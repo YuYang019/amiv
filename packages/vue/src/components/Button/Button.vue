@@ -8,39 +8,61 @@
 
 <script lang="ts">
 import { ElButton } from 'element-plus'
-import { defineComponent, h, ref, reactive, toRefs, onUpdated, computed } from 'vue'
+import { defineComponent, h, ref, inject, toRefs, onUpdated, computed, PropType } from 'vue'
 import Wrapper from './Wrapper.vue'
+import { injectionKey } from '../Form/useForm'
+
+type ActionType = 'dialog' | 'drawer';
+
+export interface Action {
+    type: 'reset' | 'button' | 'submit' | 'action';
+    label?: 'string';
+    actionType?: ActionType;
+    url?: string;
+}
 
 export default defineComponent({
     name: 'Button',
+
+    props: {
+        type: {
+            type: String,
+            default: 'button'
+        },
+        actionType: {
+            type: String as PropType<ActionType>,
+            default: ''
+        },
+        label: {
+            type: String,
+            default: 'button'
+        },
+        level: {
+            type: String,
+            default: ''
+        }
+    },
 
     components: {
         Wrapper
     },
 
     setup(props, { attrs }) {
-        // const { label, ...rest } = attrs
-        // const wrapperProps = rest
-        console.log('button-rest')
+        const form = inject(injectionKey)
 
         function onAction(slotProps) {
             console.log('click', slotProps)
             slotProps && slotProps.doAction()
         }
 
-        // onUpdated(() => {
-        //     console.log('button', 'updated')
-        // })
-
         return {
-            // label: computed(() => attrs.label),
             onAction,
-            // wrapperProps: computed(() => attrs)
+            form
         }
     },
 
     render() {
-        const { onAction, $attrs } = this
+        const { onAction, $attrs, type, actionType, label, form } = this
 
         function renderButton(slotProps) {
             let buttonType = 'default'
@@ -51,36 +73,66 @@ export default defineComponent({
             return h(ElButton, {
                 onClick: () => onAction(slotProps),
                 type: buttonType
+            }, label)
+        }
+
+        if (actionType) {
+            return h(Wrapper, {
+                ...$attrs,
+                actionType
             }, {
-                default: () => $attrs.label
+                default: (slotProps) => renderButton(slotProps)
             })
         }
 
-        return h(Wrapper, {
-            ...$attrs
-        }, {
-            default: (slotProps) => renderButton(slotProps)
-        })
+        if (type === 'button') {
+            const { url, onClick } = $attrs
+
+            const handleClick = (e: any) => {
+                onClick && onClick(e)
+                url && window.open(url)
+            }
+
+            return h(ElButton, {
+                ...$attrs,
+                onClick: handleClick
+            }, label)
+        }
+
+        if (type === 'submit') {
+            const { onClick } = $attrs
+
+            const handleClick = (e: any) => {
+                onClick && onClick(e)
+                form?.submitForm()
+            }
+
+            return h(ElButton, {
+                ...$attrs,
+                onClick: handleClick,
+            }, label)
+        }
+
+        if (type === 'reset') {
+            const { onClick } = $attrs
+
+            const handleClick = (e: any) => {
+                onClick && onClick(e)
+                form?.resetForm()
+            }
+
+            return h(ElButton, {
+                ...$attrs,
+                onClick: handleClick,
+            }, label)
+        }
+
+        return ''
     }
-
-    // setup(props, { attrs }) {
-    //     console.log('button', attrs)
-
-        
-
-    //     return {
-    //         attrs
-    //     }
-    // },
 })
 </script>
 
 <style>
-.divider {
-    height: 1px;
-    width: 100%;
-    background: #ccc;
-}
 </style>
 
 

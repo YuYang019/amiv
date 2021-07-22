@@ -28,7 +28,7 @@ export default defineComponent({
 
 <style scoped>
 #editor {
-    width: 40vw;
+    width: 50vw;
     height: 100vh;
 }
 </style>

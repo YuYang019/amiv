@@ -46,7 +46,7 @@ export default defineComponent({
 
 <style scoped>
 .output {
-    width: 60vw;
+    width: 50vw;
     height: 100vh;
 }
 </style>

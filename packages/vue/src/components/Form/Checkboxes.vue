@@ -12,29 +12,14 @@
         >
             {{ item.label }}
         </el-checkbox>
-    <!-- <el-checkbox label="复选框 B"></el-checkbox>
-    <el-checkbox label="复选框 C"></el-checkbox>
-    <el-checkbox label="禁用" disabled></el-checkbox>
-    <el-checkbox label="选中且禁用" disabled></el-checkbox> -->
     </el-checkbox-group>
-    <!-- <el-checkbox
-        v-model="value"
-        :border="border"
-        :true-label="trueValue"
-        :false-label="falseValue"
-        :disabled="linkageDisabled"
-    >
-        {{ option }}
-    </el-checkbox> -->
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch, PropType } from 'vue'
+import { defineComponent, ref, watch } from 'vue'
 
-interface Option {
-    value: any;
-    label: string;
-}
+import type { PropType } from 'vue'
+import type { Option } from 'packages/vue/src/types/shared'
 
 export default defineComponent({
     name: 'Checkboxes',

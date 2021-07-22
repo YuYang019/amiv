@@ -48,7 +48,7 @@ export default defineComponent({
             },
         }
 
-        function renderDialogFooter(actions) {
+        function renderDialogFooter(actions = []) {
             let children = [
                 h(ElButton, {
                     onClick: close

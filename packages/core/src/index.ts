@@ -1,7 +1,7 @@
 const componentsMap = new Map()
 
 interface RegisterComponentOptions<T> {
-    type: string;
+    type: string | string[];
     component: T
 }
 
@@ -11,7 +11,11 @@ export function createRenderer(options: any) {
 
 export function registerComponent<T>(options: RegisterComponentOptions<T>) {
     const { type, component } = options
-    componentsMap.set(type, component)
+    if (Array.isArray(type)) {
+        type.forEach(t => componentsMap.set(t, component))
+    } else {
+        componentsMap.set(type, component)
+    }
 }
 
 export function getComponent(type: string) {

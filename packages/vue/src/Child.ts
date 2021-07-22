@@ -1,6 +1,5 @@
-import { defineComponent, h, toRefs, ref } from 'vue'
+import { defineComponent, h, toRefs } from 'vue'
 import { getComponent } from '@amiv/core'
-import { provideKey } from './Renderer'
 
 const Child = defineComponent({
     name: 'Child',
@@ -51,6 +50,7 @@ const Child = defineComponent({
         console.log('render-child', type, body, otherProps)
 
         const vnodes = h(Component, {
+            type,
             ...otherProps
         }, {
             default: getChildren

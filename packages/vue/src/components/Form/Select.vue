@@ -14,12 +14,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, PropType } from 'vue'
+import { defineComponent, ref } from 'vue'
 
-interface SelectOption {
-    label: string;
-    value: any;
-}
+import type { PropType } from 'vue'
+import type { Option } from 'packages/vue/src/types/shared'
 
 export default defineComponent({
     name: 'Select',
@@ -37,7 +35,7 @@ export default defineComponent({
             default: () => void 0
         },
         options: {
-            type: Array as PropType<SelectOption[]>,
+            type: Array as PropType<Option[]>,
             default: () => []
         }
     },
