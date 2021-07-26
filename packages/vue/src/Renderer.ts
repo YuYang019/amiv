@@ -57,5 +57,9 @@ export const Renderer = defineComponent({
                 schema: computedSchema,
             })
         )
+    },
+
+    mounted() {
+        console.log('renderer', this)
     }
 })

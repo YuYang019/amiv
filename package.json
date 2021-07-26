@@ -6,6 +6,7 @@
         "packages/*"
     ],
     "scripts": {
+        "dev": "cd packages/playground && yarn dev",
         "lint": "eslint --fix --no-error-on-unmatched-pattern **/*.{js,ts,tsx,jsx,vue}"
     },
     "devDependencies": {

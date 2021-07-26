@@ -1,16 +1,14 @@
-import { defineComponent, h, toRefs } from 'vue'
+import { defineComponent, h, ref, getCurrentInstance } from 'vue'
 import { getComponent } from '@amiv/core'
+
+const temp: any[] = [];
+
+(window as any).temp = temp
 
 const Child = defineComponent({
     name: 'Child',
 
     props: ['schema'],
-
-    setup(props) {
-        return {
-            ...toRefs(props)
-        }
-    },
 
     render() {
         const { schema } = this
@@ -55,9 +53,11 @@ const Child = defineComponent({
         }, {
             default: getChildren
         })
+        console.log(vnodes)
+        temp.push([type, vnodes])
 
         return vnodes
-    }
+    },
 })
 
 export default Child

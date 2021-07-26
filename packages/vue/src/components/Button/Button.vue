@@ -8,18 +8,11 @@
 
 <script lang="ts">
 import { ElButton } from 'element-plus'
-import { defineComponent, h, ref, inject, toRefs, onUpdated, computed, PropType } from 'vue'
+import { defineComponent, h, ref, inject, toRefs, onUpdated, getCurrentInstance, PropType } from 'vue'
+import { useScope } from 'packages/vue/src/composables/useScope'
+import type { ActionType } from 'packages/vue/src/types/shared'
 import Wrapper from './Wrapper.vue'
 import { injectionKey } from '../Form/useForm'
-
-type ActionType = 'dialog' | 'drawer';
-
-export interface Action {
-    type: 'reset' | 'button' | 'submit' | 'action';
-    label?: 'string';
-    actionType?: ActionType;
-    url?: string;
-}
 
 export default defineComponent({
     name: 'Button',
@@ -39,6 +32,10 @@ export default defineComponent({
         },
         level: {
             type: String,
+            default: 'default'
+        },
+        url: {
+            type: String,
             default: ''
         }
     },
@@ -47,33 +44,18 @@ export default defineComponent({
         Wrapper
     },
 
-    setup(props, { attrs }) {
-        const form = inject(injectionKey)
-
-        function onAction(slotProps) {
-            console.log('click', slotProps)
-            slotProps && slotProps.doAction()
-        }
-
-        return {
-            onAction,
-            form
-        }
-    },
-
     render() {
-        const { onAction, $attrs, type, actionType, label, form } = this
+        const { $attrs, type, actionType, label, level, url } = this
+        const { onClick } = $attrs
 
-        function renderButton(slotProps) {
-            let buttonType = 'default'
-            if ($attrs.primary) {
-                buttonType = 'primary'
-            }
-
+        const renderButton = (props) => {
             return h(ElButton, {
-                onClick: () => onAction(slotProps),
-                type: buttonType
-            }, label)
+                ...$attrs,
+                ...props,
+                type: level,
+            }, {
+                default: () => label
+            })
         }
 
         if (actionType) {
@@ -81,50 +63,18 @@ export default defineComponent({
                 ...$attrs,
                 actionType
             }, {
-                default: (slotProps) => renderButton(slotProps)
+                default: (slotProps) => renderButton({
+                    ...slotProps
+                })
             })
         }
 
         if (type === 'button') {
-            const { url, onClick } = $attrs
-
             const handleClick = (e: any) => {
                 onClick && onClick(e)
                 url && window.open(url)
             }
-
-            return h(ElButton, {
-                ...$attrs,
-                onClick: handleClick
-            }, label)
-        }
-
-        if (type === 'submit') {
-            const { onClick } = $attrs
-
-            const handleClick = (e: any) => {
-                onClick && onClick(e)
-                form?.submitForm()
-            }
-
-            return h(ElButton, {
-                ...$attrs,
-                onClick: handleClick,
-            }, label)
-        }
-
-        if (type === 'reset') {
-            const { onClick } = $attrs
-
-            const handleClick = (e: any) => {
-                onClick && onClick(e)
-                form?.resetForm()
-            }
-
-            return h(ElButton, {
-                ...$attrs,
-                onClick: handleClick,
-            }, label)
+            return renderButton({ onClick: handleClick })
         }
 
         return ''

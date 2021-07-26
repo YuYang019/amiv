@@ -10,7 +10,7 @@
 
 <script lang="ts">
 import { ElInput } from 'element-plus'
-import { defineComponent } from 'vue'
+import { defineComponent, inject } from 'vue'
 import pick from 'lodash/pick'
 
 export default defineComponent({
@@ -38,6 +38,8 @@ export default defineComponent({
         const onChange = (val: unknown) => {
             props?.setFormValue?.(val)
         }
+
+        console.log('inject', inject('scope'))
 
         return {
             onChange,

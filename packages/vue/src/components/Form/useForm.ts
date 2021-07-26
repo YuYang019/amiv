@@ -98,24 +98,30 @@ export function useForm(url = '') {
     }
 
     async function submitForm() {
-        const elForm = (formRef as any)?.setupState?.elForm
-        if (elForm) {
-            elForm.validate(async valid => {
-                console.log(valid)
-                if (valid) {
-                    loading.value = true
-                    await new Promise(resolve => setTimeout(resolve, 1500))
-                    await fetch(url, {
-                        headers: {
-                            'content-type': 'application/json'
-                        },
-                        method: 'POST',
-                        body: JSON.stringify(formValue)
-                    })
-                    loading.value = false
-                }
-            })
-        }
+        return new Promise((resolve, reject) => {
+            const elForm = (formRef as any)?.setupState?.elForm
+            if (elForm) {
+                elForm.validate(async valid => {
+                    if (valid) {
+                        loading.value = true
+                        await new Promise(resolve => setTimeout(resolve, 1500))
+                        await fetch(url, {
+                            headers: {
+                                'content-type': 'application/json'
+                            },
+                            method: 'POST',
+                            body: JSON.stringify(formValue)
+                        })
+                        loading.value = false
+                        resolve('success')
+                    } else {
+                        reject()
+                    }
+                })
+            } else {
+                reject()
+            }
+        })
     }
 
     function resetForm() {

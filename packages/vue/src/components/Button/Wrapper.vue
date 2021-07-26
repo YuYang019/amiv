@@ -1,13 +1,74 @@
 <script lang="ts">
 import { ElButton, ElDialog, ElDrawer } from 'element-plus'
-import { defineComponent, h, ref, unref } from 'vue'
-import Child from '../../Child'
+import { defineComponent, h, ref, inject, getCurrentInstance } from 'vue'
+import Child from 'packages/vue/src/Child'
+import { useScope } from 'packages/vue/src/composables/useScope'
+import { injectionKey } from '../Form/useForm'
+
+import type { PropType } from 'vue'
+import type { Action, ActionType } from 'packages/vue/src/types/shared'
 
 export default defineComponent({
     name: 'Wrapper',
 
-    setup(props, { attrs }) {
+    props: {
+        actionType: {
+            type: String as PropType<ActionType>,
+            default: ''
+        },
+        dialog: {
+            type: Object,
+            default: () => ({})
+        },
+        drawer: {
+            type: Object,
+            default: () => ({})
+        },
+        onClose: {
+            type: Function,
+            default: null
+        }
+    },
+
+    setup() {
         const visible = ref(false)
+        const btnLoading = ref(false)
+        const form = inject(injectionKey)
+        const { scope } = useScope()
+
+        scope?.registerInstance(getCurrentInstance())
+
+        function getTargets() {
+            return scope?.getInstances()?.filter(item => item?.attrs?.type === 'form') ?? []
+        }
+
+        async function submitForm(actionType: ActionType) {
+            btnLoading.value = true
+            const targets = getTargets()
+            console.log(scope)
+            try {
+                if (targets.length) {
+                    // confirm 只找同级
+                    await targets[0].setupState?.form?.submitForm()
+                }
+                else if (actionType === 'submit') {
+                    // 同级的 form 找不到，用父级的 form
+                    await form?.submitForm()
+                }
+            } finally {
+                btnLoading.value = false
+            }
+        }
+
+        async function resetForm() {
+            const targets = getTargets()
+            if (targets.length) {
+                targets[0].setupState?.form?.resetForm()
+            } {
+                // 同级的 form 找不到，用父级的 form
+                form?.resetForm()
+            }
+        }
 
         function open() {
             visible.value = true
@@ -20,18 +81,18 @@ export default defineComponent({
         return {
             visible,
             open,
-            close
+            close,
+            submitForm,
+            resetForm,
+            btnLoading
         }
     },
 
-    props: ['wrapperProps'],
-
     render() {
-        const { $attrs, $slots, visible, open, close } = this
+        const { $attrs, $slots, visible, open, close, actionType, submitForm, resetForm, btnLoading, dialog, drawer, onClose } = this
+        const { onClick } = $attrs
 
-        const { actionType, onClick } = $attrs
-
-        console.log('wrapper', $attrs, $attrs.actionType)
+        console.log('wrapper', $attrs, actionType)
 
         if (!actionType) {
             return $slots.default()
@@ -48,67 +109,69 @@ export default defineComponent({
             },
         }
 
-        function renderDialogFooter(actions = []) {
-            let children = [
-                h(ElButton, {
-                    onClick: close
-                }, {
-                    default: () => '取消'
-                }),
-                h(ElButton, {
-                    type: 'primary',
-                    onClick: close
-                }, {
-                    default: () => '确认'
+        function renderFooter(actions: Action[] = []) {
+            if (actions.length) {
+                actions = actions.map(action => {
+                    return {
+                        ...action,
+                        onClose: close
+                    }
                 })
-            ]
+            }
 
             if (actions.length === 0) {
-                children = []
+                actions = [{
+                    type: 'button',
+                    actionType: 'cancel',
+                    label: '取消',
+                    level: 'default',
+                    onClose: close,
+                }, {
+                    type: 'button',
+                    actionType: 'confirm',
+                    label: '确认',
+                    level: 'primary',
+                    onClose: close
+                }]
             }
-            if (actions.length) {
-                children = actions.map(action => {
-                    const isConfirm = action?.actionType === 'confirm'
 
-                    return h(Child, {
-                        schema: action,
-                        onClick: isConfirm ? close : null
-                    })
-                })
-            }
-
-            return h('span', {
-                class: 'dialog-footer'
-            }, {
-                default: () => children
-            })
+            return actions.map(action => h(Child, {
+                schema: action,
+            }))
         }
 
         if (actionType === 'dialog') {
             Comp = ElDialog
-            const { dialog: { body, actions, ...rest } } = $attrs
-            console.log(actions)
+            const { body, actions, ...rest } = dialog
+
             if (body) {
+                if (body.type === 'form' && !body?.actions) {
+                    body.actions = []
+                }
                 children = {
                     default: () => h(Child, {
                         schema: body
                     }),
-                    footer: renderDialogFooter(actions)
+                    footer: renderFooter(actions)
                 }
             }
+
             compProps = {
                 ...compProps,
                 ...rest
             }
         }
+
         if (actionType === 'drawer') {
             Comp = ElDrawer
-            const { drawer: { body, ...rest } } = $attrs
+            const { body, actions, ...rest } = drawer
+
             if (body) {
                 children = {
-                    default: () => h(Child, {
-                        schema: body
-                    })
+                    default: () => [
+                        h(Child, { schema: body }),
+                        renderFooter()
+                    ]
                 }
             }
             compProps = {
@@ -117,20 +180,38 @@ export default defineComponent({
             }
         }
 
-        function doAction() {
-            if (onClick) {
-                onClick()
-            } else {
-                open()
-            }
+        if (actionType === 'confirm' || actionType === 'submit') {
+            return $slots.default({
+                loading: btnLoading,
+                onClick: async (e) => {
+                    await submitForm(actionType)
+                    onClick && onClick(e)
+                    onClose && onClose()
+                }
+            })
         }
 
+        if (actionType === 'cancel') {
+            return $slots.default({
+                onClick: (e) => {
+                    onClick && onClick(e)
+                    onClose && onClose()
+                }
+            })
+        }
+
+        if (actionType === 'reset') {
+            return $slots.default({
+                onClick: (e) => {
+                    onClick && onClick(e)
+                    resetForm()
+                }
+            })
+        }
 
         function renderChild() {
-            return $slots.default({ doAction })
+            return $slots.default({ onClick: open })
         }
-
-        console.log('render-wrapper', compProps)
 
         return [
             renderChild(),
@@ -143,10 +224,8 @@ export default defineComponent({
 </script>
 
 <style>
-.divider {
-    height: 1px;
-    width: 100%;
-    background: #ccc;
+.el-drawer__body {
+    padding: 20px;
 }
 </style>
 

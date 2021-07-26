@@ -10,20 +10,21 @@
         :model="value"
     >
         <slot />
-        <div class="form-footer">
-            <child
-                v-for="(schema, index) in actions"
-                :key="index"
-                :schema="schema"
-            />
-        </div>
     </el-form>
+    <div class="form-footer">
+        <child
+            v-for="(schema, index) in actions"
+            :key="index"
+            :schema="schema"
+        />
+    </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, provide } from 'vue'
+import { defineComponent, ref, provide, getCurrentInstance } from 'vue'
 import { useForm, injectionKey } from './useForm'
 import Child from 'packages/vue/src/Child'
+import { useScope } from 'packages/vue/src/composables/useScope'
 
 import type { PropType } from 'vue'
 
@@ -69,9 +70,12 @@ export default defineComponent({
 
     setup(props) {
         const form = useForm(props.api)
+        const { scope }  = useScope()
         const elForm = ref()
 
         provide(injectionKey, form)
+
+        scope?.registerInstance(getCurrentInstance())
 
         const enhanceValidator = (validator: Validator) => {
             if (typeof validator === 'function') {
@@ -122,10 +126,11 @@ export default defineComponent({
         }
 
         return {
+            form,
             elForm,
-            innerRules: makeRules(props.rules),
+            loading: form.loading,
             value: form.formValue,
-            loading: form.loading
+            innerRules: makeRules(props.rules),
         }
     },
 

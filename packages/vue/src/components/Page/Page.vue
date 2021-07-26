@@ -7,10 +7,15 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, h } from 'vue'
+import { defineComponent, h, provide } from 'vue'
+import { useScope } from 'packages/vue/src/composables/useScope'
 
 export default defineComponent({
     name: 'Page',
+
+    setup() {
+        useScope()
+    }
 })
 </script>
 

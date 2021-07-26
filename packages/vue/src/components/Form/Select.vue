@@ -14,7 +14,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, getCurrentInstance } from 'vue'
+import { useScope } from 'packages/vue/src/composables/useScope'
 
 import type { PropType } from 'vue'
 import type { Option } from 'packages/vue/src/types/shared'
@@ -41,6 +42,10 @@ export default defineComponent({
     },
 
     setup(props) {
+        const { scope } = useScope()
+
+        scope?.registerInstance(getCurrentInstance())
+
         const onChange = (val: unknown) => {
             props?.setFormValue?.(val)
         }
